@@ -1,0 +1,8 @@
+# Your domain name
+DOMAIN=example.com
+
+# Absolute path (on your host) to SSL certificate
+SSL_CERT_PATH=/etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+
+# Absolute path (on your host) to SSL private key
+SSL_PRIVATE_KEY=/etc/letsencrypt/live/${DOMAIN}/privkey.pem
