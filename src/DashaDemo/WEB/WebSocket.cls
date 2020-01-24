@@ -7,6 +7,8 @@ Parameter Timeout = 1800;
 /// Buffer size in bytes
 Parameter Buffer = 8192;
 
+Parameter UseSession = 1;
+
 Method OnPreServer() As %Status
 {
     set ..SharedConnection=1
@@ -57,7 +59,6 @@ Method Write(data As %String) As %Status
 Method Server() As %Status
 {
     try {
-        set ^ws($zdt($Now())) = 1
         $$$ThrowOnError(..Write(..SessionId_" ::: "_..WebSocketID))
         $$$ThrowOnError(..Write(##class(DashaDemo.DB.Appointment).GetConversations()))
         $$$ThrowOnError(..Write(##class(DashaDemo.DB.Survey).GetSurveys()))
@@ -85,11 +86,11 @@ Method ClientLoop()
 
         if (data = "") { continue }
         if (data.action = "newNPS") {
-            set ^newNPS = data.%ToJSON()
+            //set ^newNPS = data.%ToJSON()
             do ..Write(..SendToProduction(data.phones)) 
         }
         if (data.action = "npsresults") {
-            set ^npsresults = data.%ToJSON()
+            //set ^npsresults = data.%ToJSON()
             do ..Write(##class(DashaDemo.DB.Survey).GetSurveyResults($tr(data.id,"#"))) 
         }
     }

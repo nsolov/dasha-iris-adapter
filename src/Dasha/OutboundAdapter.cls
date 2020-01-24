@@ -18,34 +18,4 @@ Method OnInit() As %Status
     return $$$OK
 }
 
-/// data shoud be like 
-/// set data = [{"name":(name), "data":{"phone":(phone),"timezone":(timezone)}}]
-/// returns Conversation ID
-Method StartNPSSurvey(task As %String, group As %String, callBackURL As %String = "", data As %DynamicArray = "") As %DynamicArray
-{
-	try {
-		$$$TRACE(..NPSQueueID)
-		if (..NPSQueueID="") {
-			set ..NPSQueueID = ..CreateConversationQueue(callBackURL, 3)
-		} 
-		$$$ThrowOnError(..GetQueueState(.state, ..NPSQueueID))
-		if (state'="Running") {
-			set ..NPSQueueID = ..CreateConversationQueue(callBackURL, 3)
-		}
-		$$$TRACE(..NPSQueueID)
-		$$$ThrowOnError(..NewConversation(.convIDs, task, group, data))
-
-		set iter = convIDs.%GetIterator()
-		set ids = []
-		while iter.%GetNext(.key , .obj ) {
-			do ids.%Push(obj.id)
-		}
-		$$$ThrowOnError(..AddConversationsToQueue(..NPSQueueID, ids))
-		return convIDs
-	} catch ex {
-		do ex.Log()
-		return []
-	}
-}
-
 }

@@ -25,8 +25,6 @@ ClassMethod SaveNPSResult() As %Status
         if ('$IsObject(request)) {
             $$$ThrowStatus($$$ERROR(5001,"empty request body"))
         }
-        set ^npsResult($zdt($now())) = request.%ToJSON()
-
         $$$ThrowOnError(##class(Ens.Director).CreateBusinessService("NPSResultsService",.tService))
         set msg = ##class(Ens.StringContainer).%New(request.%ToJSON())
         $$$ThrowOnError(tService.ProcessInput(msg))
@@ -59,7 +57,6 @@ ClassMethod SaveConversation() As %Status
         if ('$IsObject(request)) {
             $$$ThrowStatus($$$ERROR(5001,"empty request body"))
         }
-        set ^rest.appointment($zdt($now())) = request.%ToJSON() 
         $$$ThrowOnError(##class(Ens.Director).CreateBusinessService("AppointmentService",.tService))
         set msg = ##class(Ens.StringContainer).%New(request.%ToJSON())
         $$$ThrowOnError(tService.ProcessInput(msg))

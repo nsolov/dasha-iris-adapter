@@ -5,27 +5,21 @@ Method OnProcessInput(pRequest As Ens.StringContainer, pOutput As Ens.StringCont
 {
     try {
 	    set appointment = ##class(DashaDemo.Ens.Msg.AppointmentRequest).%New()
-	    set appointment.JSON = pRequest.StringValue
-	    
-	    $$$TRACE(pRequest.StringValue)
-
+	    set appointment.JSON = pRequest.StringValue 
 	    set json = {}.%FromJSON(pRequest.StringValue)
-	    set appointment.ConvID = json.Id
-        set appointment.CreatedTime = json.CreatedTime
-        $$$TRACE("id:"_json.Id)
-	    set iter = json.Results.%GetIterator()
+	    set appointment.ConvID = json.id
+        set appointment.CreatedTime = json.createdTime
+        set iter = json.results.%GetIterator()
         // finding the latest result
         set latestResultTime = 0
         set latestResult = "" 
 	    while iter.%GetNext(.key , .result ) {
-        	set time = ##class(%Library.PosixTime).XSDToLogical(result.CompletedTime)
+        	set time = ##class(%Library.PosixTime).XSDToLogical(result.completedTime)
             if (time>latestResultTime) {
                 set latestResultTime = time
                 set latestResult = result
             }
         }  
-        $$$TRACE(time_" "_latestResultTime_" "_latestResult)
-
         if (latestResult'="") {
             set appointment.HasAppt = latestResult.result.hasAppt
             set appointment.ServiceStatus = latestResult.result.serviceStatus
@@ -33,7 +27,7 @@ Method OnProcessInput(pRequest As Ens.StringContainer, pOutput As Ens.StringCont
             set appointment.AppDate = latestResult.result.date
             set appointment.AppTime = latestResult.result.time
             set appointment.FullName = latestResult.result.fullname
-            set appointment.CompletedTime = latestResult.CompletedTime
+            set appointment.CompletedTime = latestResult.completedTime
             $$$ThrowOnError(..SendRequestAsync("DBOperation",appointment))
         }
     } catch ex {

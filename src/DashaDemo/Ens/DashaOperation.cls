@@ -12,38 +12,42 @@ Property Task As %String;
 
 Property Group As %String;
 
-Property CallBackURL As %String;
-
-Method NewCall(pRequest As DashaDemo.Ens.Msg.NewCallRequest, Output pResponse As Ens.Response) As %Status
+/// Creates conversations in Dasha service and Response an array of conversation ID
+Method StartNPSSurvey(pRequest As DashaDemo.Ens.Msg.NewNPSRequest, Output pResponse As Ens.StringContainer) As %Status
 {
 	try {
-		$$$TRACE(pRequest.PhonesJSONString)
-		set ids = ..Adapter.StartNPSSurvey(..Task, ..Group, ..CallBackURL, [].%FromJSON(pRequest.PhonesJSONString))
-		$$$TRACE(ids.%ToJSON())
-
-		// save to DB!
-		set survey = ##class(DashaDemo.DB.Survey).%New(pRequest.%Id())
-		set iter = ids.%GetIterator()
-		while iter.%GetNext(.key , .obj ) {
-			set surveyResult = ##class(DashaDemo.DB.SurveyResults).%New(survey, obj)
-			do surveyResult.%Save()
-		}
-		do survey.Send() // send to all client using websocket
+	    $$$TRACE(pRequest.PhonesJSONString)
+	    $$$ThrowOnError(..Adapter.NewConversation(.conversationIDs,..Task,..Group,[].%FromJSON(pRequest.PhonesJSONString)))
+	    $$$TRACE(conversationIDs.%ToJSON())
+	    set pResponse = ##class(Ens.StringContainer).%New(conversationIDs.%ToJSON()) 
 	} catch ex {
-		return ex.AsStatus()	
+	    do ex.Log()
+	    return ex.AsStatus()
 	}
+	return $$$OK
+}
+
+Method StartConversation(pRequest As DashaDemo.Ens.Msg.StartConversationRequest, Output pResponse As Ens.StringContainer) As %Status
+{
+    $$$TRACE("ConversationId:"_pRequest.ConversationId)
+    do ..DeferResponse(.token)
+    set ^conversations(pRequest.ConversationId) = token
+	$$$ThrowOnError(..Adapter.AddConversationsToQueue(pRequest.ConversationId))
 	return $$$OK
 }
 
 XData MessageMap
 {
 <MapItems>
-	<MapItem MessageType="DashaDemo.Ens.Msg.NewCallRequest"> 
-		<Method>NewCall</Method>
-	</MapItem>
+	<MapItem MessageType="DashaDemo.Ens.Msg.StartConversationRequest"> 
+        <Method>StartConversation</Method>
+    </MapItem>
+    <MapItem MessageType="DashaDemo.Ens.Msg.NewNPSRequest"> 
+        <Method>StartNPSSurvey</Method>
+    </MapItem>
 </MapItems>
 }
 
-Parameter SETTINGS = "CallBackURL:Dasha,Task:Dasha,Group:Dasha,ReplyCodeActions,RetryInterval,AlertRetryGracePeriod:Alerting,FailureTimeout,QueueCountAlert:Alerting,QueueWaitAlert:Alerting,SendSuperSession";
+Parameter SETTINGS = "Task:Dasha,Group:Dasha,ReplyCodeActions,RetryInterval,AlertRetryGracePeriod:Alerting,FailureTimeout,QueueCountAlert:Alerting,QueueWaitAlert:Alerting,SendSuperSession";
 
 }

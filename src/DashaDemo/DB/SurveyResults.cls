@@ -32,15 +32,13 @@ Property NPSQ1 As %Integer;
 
 Property NPSQ1Comment As %String(MAXLEN = 10000);
 
-Method %OnNew(survey As %Integer, obj As %DynamicObject) As %Status
+Method %OnNew(survey As DashaDemo.DB.Survey, convID, obj) As %Status
 {
     set ..Survey = survey
-    set ..DashaConversationID = obj.id
+    set ..DashaConversationID = convID
     set ..Name = obj.name
-    if (obj.data) {
-        set ..Phone = obj.data.phone
-        set ..Timezone = obj.data.timezone
-    }
+    set ..Phone = obj.phone
+    set ..Timezone = obj.timezone
     return $$$OK
 }
 

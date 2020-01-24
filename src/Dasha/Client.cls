@@ -1,3 +1,5 @@
+Include Ensemble
+
 /// Object script class to work with Dasha.ai API.
 /// 
 /// This class implements not all methods from 
@@ -68,6 +70,7 @@ Method GetToken() As %Status
         do httprequest.InsertFormData("username",..Login)
         do httprequest.InsertFormData("password",..Password)
         set httprequest.Server = ..AuthHost
+        
         do httprequest.Post("/connect/token")
         if (httprequest.HttpResponse="") { 
             $$$ThrowStatus($$$ERROR(5001, "Error connecting "_..AuthHost)) 
@@ -75,6 +78,7 @@ Method GetToken() As %Status
         set response = httprequest.HttpResponse
         
         set js = {}.%FromJSON(response.Data)
+        
         set ..Token = js."access_token"
         set ..TokenExpirationTime = time + (1000000*js."expires_in")-5000000
     } catch ex {
@@ -97,8 +101,17 @@ Method CreateConversationQueue(individualReportUrl As %String, maxParallelConver
         set httprequest = ..GetHTTPRequestObject()
         do httprequest.EntityBody.Write(jsonParams.%ToJSON())
         set path = "/api/v1/queues"
+        
         do httprequest.Post(path)
         set response = httprequest.HttpResponse
+        
+        set key = ""
+        set str = ""
+        for {
+            set key = $Order(httprequest.HttpResponse.Headers(key))
+            quit:(key="")
+            set str = str_key_":"_httprequest.HttpResponse.Headers(key)_$$$NL
+        }
         if (response.StatusCode'=201) {
             $$$ThrowStatus($$$ERROR($$$GeneralError,"error while executing POST request to resource "_path_". Status: "_response.StatusCode_". Data: "_response.Data.Read(1000)))
         }
@@ -229,12 +242,14 @@ Method PutSchedule(schedule As %DynamicObject, taskId As %String, groupId As %St
 }
 
 /// Creates New conversation
-Method NewConversation(Output conversationIDs As %DynamicArray, task As %String, group As %String, data As %DynamicArray) As %Status
+/// Using conversationIDs returns array of ID
+Method NewConversation(Output conversationIDs As %DynamicObject, task As %String, group As %String, data As %DynamicArray) As %Status
 {
 	#dim httprequest as %Net.HttpRequest
     #dim response as %Net.HttpResponse
     try {
-        if ('$isObject(data)) { set data = [] }
+        set conversationIDs = {} // необходимо возвращать пары - номер телефона и ID conversation
+        if ('$isObject(data)) { set data = {} }
         
         if (..TokenExpirationTime < ##class(%Library.PosixTime).CurrentTimeStamp()) {
             $$$ThrowOnError(..GetToken())
@@ -246,12 +261,17 @@ Method NewConversation(Output conversationIDs As %DynamicArray, task As %String,
         set path = "/api/v1/conversations/tasks/"_task_"/groups/"_group_"?strategy=ForceAdd" 
         do httprequest.Post(path)
         set response = httprequest.HttpResponse
-        if (response.StatusCode'=200) {
+        if (response.StatusCode'=201) {
             return $$$ERROR($$$GeneralError,"error while executing POST request to resource "_path_".  Status: "_response.StatusCode_", Data: "_response.Data.Read(1000))
         }
-        set conversationIDs = [].%FromJSON(response.Data)
+        set jsResult = [].%FromJSON(response.Data)
+        set iter = jsResult.%GetIterator()
+        while iter.%GetNext(.key , .res ) {
+            set convData = {"name":(res.name), "phone":(res.data.phone), "timezone":(res.data.timezone)}
+            do conversationIDs.%Set(res.id,convData)
+        }
     } catch ex {
-	    set conversationIDs = []
+	    set conversationIDs = {}
 	    do ex.Log()
         return ex.AsStatus()
     }
@@ -259,22 +279,15 @@ Method NewConversation(Output conversationIDs As %DynamicArray, task As %String,
 }
 
 /// Add conversations to queue
-Method AddConversationsToQueue(queue As %String, ids As %DynamicArray, deadline As %String = "") As %Status
+Method AddConversationsToQueue(id As %String) As %Status
 {
     try {
-        if (deadline="") {
-            set deadline = ##class(%Library.PosixTime).LogicalToXSD(##class(%Library.PosixTime).CurrentTimeStamp(3)+3600000000)
-        }
-        set jsonParams = {"deadline": (deadline),"ids": (ids)}
-
         if (..TokenExpirationTime < ##class(%Library.PosixTime).CurrentTimeStamp()) {
             $$$ThrowOnError(..GetToken())
         }
         set httprequest = ..GetHTTPRequestObject()
 
-        do httprequest.EntityBody.Write(jsonParams.%ToJSON())
-
-        set path = "/api/v1/queues/"_queue
+        set path = "/api/v1/processing/conversations/"_id_"/add"
         do httprequest.Post(path)
         set response = httprequest.HttpResponse
         if (response.StatusCode'=200) {
