@@ -10,13 +10,13 @@ XData ProductionDefinition
   </Item>
   <Item Name="DashaOperation" Category="" ClassName="DashaDemo.Ens.DashaOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
     <Setting Target="Adapter" Name="AuthHost">auth.dasha.ai</Setting>
-    <Setting Target="Adapter" Name="ClientID">3PAPI</Setting>
+    <Setting Target="Adapter" Name="ClientID"></Setting>
     <Setting Target="Adapter" Name="DashaAPI">demo.us.dasha.ai</Setting>
-    <Setting Target="Adapter" Name="SSLConfig">dasha</Setting>
+    <Setting Target="Adapter" Name="SSLConfig"></Setting>
     <Setting Target="Host" Name="Group">med-in</Setting>
     <Setting Target="Host" Name="Task">us-demo-medical-incoming-us</Setting>
-    <Setting Target="Adapter" Name="Credentials">3PAPI</Setting>
-    <Setting Target="Host" Name="CallBackURL">https://dasha.web4.ru/dasha/nps</Setting>
+    <Setting Target="Adapter" Name="Credentials"></Setting>
+    <Setting Target="Host" Name="CallBackURL"></Setting>
   </Item>
   <Item Name="NPSService" Category="" ClassName="DashaDemo.Ens.NPSService" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
   </Item>
