@@ -1,4 +1,4 @@
-FROM store/intersystems/iris:2019.2.0.107.0-community
+FROM docker pull store/intersystems/iris-community:2019.4.0.383.0
 
 COPY src /mysrc
 

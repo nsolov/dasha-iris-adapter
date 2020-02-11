@@ -16,7 +16,6 @@ XData ProductionDefinition
     <Setting Target="Host" Name="Group">med-in</Setting>
     <Setting Target="Host" Name="Task">us-demo-medical-incoming-us</Setting>
     <Setting Target="Adapter" Name="Credentials"></Setting>
-    <Setting Target="Host" Name="CallBackURL"></Setting>
   </Item>
   <Item Name="NPSService" Category="" ClassName="DashaDemo.Ens.NPSService" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
   </Item>
