@@ -86,11 +86,9 @@ Method ClientLoop()
 
         if (data = "") { continue }
         if (data.action = "newNPS") {
-            //set ^newNPS = data.%ToJSON()
             do ..Write(..SendToProduction(data.phones)) 
         }
         if (data.action = "npsresults") {
-            //set ^npsresults = data.%ToJSON()
             do ..Write(##class(DashaDemo.DB.Survey).GetSurveyResults($tr(data.id,"#"))) 
         }
     }

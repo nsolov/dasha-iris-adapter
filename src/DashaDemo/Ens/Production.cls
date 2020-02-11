@@ -11,7 +11,7 @@ XData ProductionDefinition
   <Item Name="DashaOperation" Category="" ClassName="DashaDemo.Ens.DashaOperation" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
     <Setting Target="Adapter" Name="AuthHost">auth.dasha.ai</Setting>
     <Setting Target="Adapter" Name="ClientID"></Setting>
-    <Setting Target="Adapter" Name="DashaAPI">demo.us.dasha.ai</Setting>
+    <Setting Target="Adapter" Name="DashaAPI">api.us.dasha.ai</Setting>
     <Setting Target="Adapter" Name="SSLConfig"></Setting>
     <Setting Target="Host" Name="Group">med-in</Setting>
     <Setting Target="Host" Name="Task">us-demo-medical-incoming-us</Setting>

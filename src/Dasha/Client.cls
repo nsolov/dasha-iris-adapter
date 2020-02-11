@@ -80,7 +80,7 @@ Method GetToken() As %Status
         set js = {}.%FromJSON(response.Data)
         
         set ..Token = js."access_token"
-        set ..TokenExpirationTime = time + (1000000*js."expires_in")-5000000
+        set ..TokenExpirationTime = time + (1000000*js."expires_in"/2)
     } catch ex {
 	    
         return ex.AsStatus()
@@ -248,7 +248,7 @@ Method NewConversation(Output conversationIDs As %DynamicObject, task As %String
 	#dim httprequest as %Net.HttpRequest
     #dim response as %Net.HttpResponse
     try {
-        set conversationIDs = {} // необходимо возвращать пары - номер телефона и ID conversation
+        set conversationIDs = {} 
         if ('$isObject(data)) { set data = {} }
         
         if (..TokenExpirationTime < ##class(%Library.PosixTime).CurrentTimeStamp()) {
