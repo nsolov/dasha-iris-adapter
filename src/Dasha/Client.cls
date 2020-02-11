@@ -112,7 +112,7 @@ Method CreateConversationQueue(individualReportUrl As %String, maxParallelConver
             quit:(key="")
             set str = str_key_":"_httprequest.HttpResponse.Headers(key)_$$$NL
         }
-        if (response.StatusCode'=201) {
+        if (response.StatusCode<200) || (response.StatusCode>=300)  {
             $$$ThrowStatus($$$ERROR($$$GeneralError,"error while executing POST request to resource "_path_". Status: "_response.StatusCode_". Data: "_response.Data.Read(1000)))
         }
         return response.Data.Read(1000)
@@ -133,7 +133,7 @@ Method GetQueueState(Output state As %String, queueID As %String = "") As %Statu
         set path = "/api/v1/queues/"_queueID_"/state"
         do httprequest.Get(path)
         set response = httprequest.HttpResponse
-        if (response.StatusCode'=200) {
+        if (response.StatusCode<200) || (response.StatusCode>=300) {
             $$$ThrowStatus($$$ERROR($$$GeneralError,"Error while executing GET request to resource "_path_". Status: "_response.StatusCode_", Data: "_response.Data.Read(1000)))
         }
         set state = $translate(response.Data.Read(1000),"""")
@@ -166,7 +166,7 @@ Method GetGroups(Output groups As %DynamicArray, taskId As %String) As %Status
         set path = "/api/v1/conversations/tasks/"_taskId_"/groups"
         do httprequest.Get(path)
         set response = httprequest.HttpResponse
-        if (response.StatusCode'=200) {
+        if (response.StatusCode<200) || (response.StatusCode>=300) {
             $$$ThrowStatus($$$ERROR($$$GeneralError,"Error while executing GET request to resource "_path_". Status: "_response.StatusCode_", Data: "_response.Data.Read(1000)))
         }
         set groups = [].%FromJSON(response.Data)
@@ -187,7 +187,7 @@ Method GetScheduleState(Output state As %String, taskId As %String, groupId As %
         set path = "/api/v1/schedules/task/"_taskId_"/group/"_groupId_"/state"
         do httprequest.Get(path)
         set response = httprequest.HttpResponse
-        if (response.StatusCode'=200) {
+        if (response.StatusCode<200) || (response.StatusCode>=300) {
             $$$ThrowStatus($$$ERROR($$$GeneralError,"Error while executing GET request to resource "_path_". Status: "_response.StatusCode_", Data: "_response.Data.Read(1000)))
         }
         set state =  $translate(response.Data.Read(),"""")
@@ -208,7 +208,7 @@ Method GetSchedule(Output schedule As %DynamicObject, taskId As %String, groupId
         set path = "/api/v1/schedules/task/"_taskId_"/group/"_groupId
         do httprequest.Get(path)
         set response = httprequest.HttpResponse
-        if (response.StatusCode'=200) {
+        if (response.StatusCode<200) || (response.StatusCode>=300) {
             $$$ThrowStatus($$$ERROR($$$GeneralError,"Error while executing GET request to resource "_path_". Status: "_response.StatusCode_", Data: "_response.Data.Read(1000)))
         }
         set schedule = {}.%FromJSON(response.Data)
@@ -231,7 +231,7 @@ Method PutSchedule(schedule As %DynamicObject, taskId As %String, groupId As %St
         set path = "/api/v1/schedules/task/"_taskId_"/group/"_groupId
         do httprequest.Put(path)
         set response = httprequest.HttpResponse
-        if (response.StatusCode'=200) {
+        if (response.StatusCode<200) || (response.StatusCode>=300) {
             $$$ThrowStatus($$$ERROR($$$GeneralError,"Error while executing PUT request to resource "_path_". Status: "_response.StatusCode_", Data: "_response.Data.Read(1000)))
         }
         return response.Data.Read(1000)
@@ -261,7 +261,7 @@ Method NewConversation(Output conversationIDs As %DynamicObject, task As %String
         set path = "/api/v1/conversations/tasks/"_task_"/groups/"_group_"?strategy=ForceAdd" 
         do httprequest.Post(path)
         set response = httprequest.HttpResponse
-        if (response.StatusCode'=201) {
+        if (response.StatusCode<200) || (response.StatusCode>=300) {
             return $$$ERROR($$$GeneralError,"error while executing POST request to resource "_path_".  Status: "_response.StatusCode_", Data: "_response.Data.Read(1000))
         }
         set jsResult = [].%FromJSON(response.Data)
@@ -290,7 +290,7 @@ Method AddConversationsToQueue(id As %String) As %Status
         set path = "/api/v1/processing/conversations/"_id_"/add"
         do httprequest.Post(path)
         set response = httprequest.HttpResponse
-        if (response.StatusCode'=200) {
+        if (response.StatusCode<200) || (response.StatusCode>=300) {
             return $$$ERROR($$$GeneralError,"error while executing post request to resource "_path_". "_response.Data.Read(1000))
         }
         return $$$OK
