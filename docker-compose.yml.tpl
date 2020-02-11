@@ -27,6 +27,5 @@ services:
 
 networks:
   iris:
-    name: iris
 
 
