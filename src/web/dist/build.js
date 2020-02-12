@@ -12903,7 +12903,7 @@ const store = new __WEBPACK_IMPORTED_MODULE_8_vuex__["a" /* default */].Store({
     }
 });
 
-__WEBPACK_IMPORTED_MODULE_0_vue__["default"].use(__WEBPACK_IMPORTED_MODULE_7_vue_native_websocket___default.a, 'wss://'+location.hostname+(location.port ? ':'+location.port: '')+'/DashaDemo.WEB.WebSocket.cls', {
+__WEBPACK_IMPORTED_MODULE_0_vue__["default"].use(__WEBPACK_IMPORTED_MODULE_7_vue_native_websocket___default.a, 'wss://'+location.hostname+'/DashaDemo.WEB.WebSocket.cls', {
     // connectManually: true,
     format: 'json',
     store: store

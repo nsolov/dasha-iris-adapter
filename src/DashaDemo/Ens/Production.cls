@@ -12,9 +12,9 @@ XData ProductionDefinition
     <Setting Target="Adapter" Name="AuthHost">auth.dasha.ai</Setting>
     <Setting Target="Adapter" Name="ClientID"></Setting>
     <Setting Target="Adapter" Name="DashaAPI">api.us.dasha.ai</Setting>
-    <Setting Target="Adapter" Name="SSLConfig"></Setting>
+    <Setting Target="Adapter" Name="SSLConfig">dasha</Setting>
     <Setting Target="Host" Name="Group">med-in</Setting>
-    <Setting Target="Host" Name="Task">us-demo-medical-incoming-us</Setting>
+    <Setting Target="Host" Name="Task">iris-medical</Setting>
     <Setting Target="Adapter" Name="Credentials"></Setting>
   </Item>
   <Item Name="NPSService" Category="" ClassName="DashaDemo.Ens.NPSService" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
@@ -22,6 +22,8 @@ XData ProductionDefinition
   <Item Name="NPSResultsService" Category="" ClassName="DashaDemo.Ens.NPSResultsService" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
   </Item>
   <Item Name="AppointmentService" Category="" ClassName="DashaDemo.Ens.AppointmentService" PoolSize="0" Enabled="true" Foreground="false" Comment="" LogTraceEvents="true" Schedule="">
+  </Item>
+  <Item Name="NPSBusinessProcess" Category="" ClassName="DashaDemo.Ens.NPSBusinessProcess" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
   </Item>
 </Production>
 }
