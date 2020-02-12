@@ -112,7 +112,7 @@ tools/install-docker-ubuntu
 
 **Note:**
 
-Credentials to IRIS is `_system/newpass`
+Credentials to IRIS is `_system/SYS`
 
 ### 6. Check connectivity to REST endpoint
 
